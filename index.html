@@ -6,20 +6,20 @@
 <title>3D Neuron Model: How NMO Breaks Nerve Communication</title>
 <style>
   * { box-sizing: border-box; }
-  html, body { margin: 0; height: 100%; overflow: hidden; font-family: "Segoe UI", system-ui, -apple-system, Arial, sans-serif; background: #f5f7fb; color: #1d2a4d; }
+  html, body { margin: 0; height: 100%; overflow: hidden; font-family: "Segoe UI", system-ui, -apple-system, Arial, sans-serif; background: #000000; color: #ffffff; }
   #scene { position: fixed; inset: 0; }
   header { position: fixed; top: 0; left: 0; right: 0; text-align: center; padding: 14px 16px 0; pointer-events: none; z-index: 5; }
   header h1 { margin: 0; font-size: clamp(18px, 2.6vw, 32px); }
-  header p { margin: 4px 0 0; color: #55607a; font-size: clamp(12px, 1.3vw, 16px); }
+  header p { margin: 4px 0 0; color: #b8c0d4; font-size: clamp(12px, 1.3vw, 16px); }
   .controls { position: fixed; top: 86px; left: 50%; transform: translateX(-50%); display: flex; gap: 8px; flex-wrap: wrap; justify-content: center; z-index: 6; }
   button { font: inherit; font-size: 14px; font-weight: 600; border: 2px solid #c9d0de; background: #fff; color: #1d2a4d; padding: 7px 14px; border-radius: 999px; cursor: pointer; }
   button:hover { border-color: #8a96ad; }
   button.on.healthy { background: #2f8fcf; border-color: #2f8fcf; color: #fff; }
   button.on.nmo { background: #d62839; border-color: #d62839; color: #fff; }
   button.send { background: #f2a900; border-color: #f2a900; color: #1d2a4d; }
-  .hint { position: fixed; top: 128px; left: 50%; transform: translateX(-50%); font-size: 13px; color: #7a8396; z-index: 5; pointer-events: none; white-space: nowrap; }
+  .hint { position: fixed; top: 128px; left: 50%; transform: translateX(-50%); font-size: 13px; color: #9aa3b5; z-index: 5; pointer-events: none; white-space: nowrap; }
   .panel { position: fixed; left: 50%; bottom: 14px; transform: translateX(-50%); width: min(1100px, calc(100% - 24px)); display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; z-index: 5; }
-  .box { border-radius: 14px; border: 2px solid; padding: 10px 14px; font-size: 14px; line-height: 1.35; background: #fff; }
+  .box { border-radius: 14px; border: 2px solid; padding: 10px 14px; font-size: 14px; line-height: 1.35; background: #fff; color: #2a3350; }
   .box h3 { margin: 0 0 4px; font-size: 16px; }
   .b1 { border-color: #d62839; background: #fdecee; } .b1 h3 { color: #d62839; }
   .b2 { border-color: #c68a00; background: #fff6dd; } .b2 h3 { color: #c68a00; }
@@ -62,7 +62,7 @@
 <div id="status"></div>
 <div class="panel" id="panel">
   <div class="box bh"><h3>Healthy neuron</h3>Myelin insulates the axon, so the action potential <b>jumps from node to node</b> (saltatory conduction). The message reaches the axon terminals fast and they release neurotransmitters.</div>
-  <div class="box b1"><h3>1. Immune system attacks</h3>Antibodies (AQP4-IgG) attack support cells in the optic nerve and spinal cord. Inflammation strips off the myelin sheath.</div>
+  <div class="box b1"><h3>1. Immune system attacks</h3>Antibodies attack support cells in the optic nerve and spinal cord. Inflammation strips off the myelin sheath.</div>
   <div class="box b2"><h3>2. Error in communication</h3>Without myelin, the signal can't jump between nodes. Current leaks out, so it slows down or stops before reaching the axon terminals.</div>
   <div class="box b3"><h3>3. Fan's symptoms</h3>Optic nerve: blurry vision, vision loss. Spinal cord: arm numbness &amp; spasms, losing bladder control. Steroids calm inflammation = fewer spasms.</div>
 </div>
@@ -77,7 +77,7 @@ const C = { dend: 0x6c4fd1, soma: 0x8a6fe0, nucleus: 0x3d2a8f, axon: 0xe6a06b, m
 
 const host = document.getElementById('scene');
 const scene = new THREE.Scene();
-scene.background = new THREE.Color(0xf5f7fb);
+scene.background = new THREE.Color(0x000000);
 const camera = new THREE.PerspectiveCamera(40, innerWidth / innerHeight, 0.1, 200);
 const HOME = new THREE.Vector3(0.5, 4.5, 19);
 camera.position.copy(HOME);
@@ -140,8 +140,6 @@ dendDirs.forEach(d => {
 
 // ---- Axon hillock + axon ----
 const AX0 = -5.75, AX1 = 7.6;
-const hill = new THREE.Mesh(new THREE.CylinderGeometry(0.13, 0.55, 0.9, 24), mat(C.soma));
-hill.rotation.z = Math.PI / 2; hill.position.set(-5.55, 0, 0); neuron.add(hill);
 const axon = new THREE.Mesh(new THREE.CylinderGeometry(0.13, 0.13, AX1 - AX0, 20), mat(C.axon));
 axon.rotation.z = Math.PI / 2; axon.position.set((AX0 + AX1) / 2, 0, 0); neuron.add(axon);
 
@@ -221,15 +219,14 @@ function label(html, pos, cls = '', group = 'all') {
   const o = new CSS2DObject(div); o.position.copy(pos); o.userData.group = group; neuron.add(o); labels.push(o); return o;
 }
 label('Dendrites<small>receive signals</small>', new THREE.Vector3(-9.6, 2.3, 0));
-label('Cell body (soma)<small>control center</small>', new THREE.Vector3(-7, -2.05, 0));
+label('Cell body<small>control center</small>', new THREE.Vector3(-7, -2.05, 0));
 label('Nucleus', new THREE.Vector3(-7, 0.9, 1.2));
-label('Axon hillock<small>signal starts here</small>', new THREE.Vector3(-5.5, 1.0, 0));
 label('Myelin sheath<small>insulation</small>', new THREE.Vector3(segX[1], -0.95, 0));
 label('Node of Ranvier<small>gap the signal jumps to</small>', new THREE.Vector3(nodeX[2], 1.0, 0));
 label('Axon<small>carries the signal</small>', new THREE.Vector3(nodeX[7], -0.85, 0));
 label('Axon terminals<small>release neurotransmitters</small>', new THREE.Vector3(AX1 + 1.2, 1.55, 0));
 label('Damaged myelin<small>demyelination + inflammation</small>', new THREE.Vector3(segX[5] + 0.3, -1.75, 0), 'red', 'nmo');
-label('Antibodies (AQP4-IgG)<small>immune system attacks</small>', new THREE.Vector3(segX[3] - 0.5, -1.75, 0), 'red', 'nmo');
+label('Antibodies<small>immune system attacks</small>', new THREE.Vector3(segX[3] - 0.5, -1.75, 0), 'red', 'nmo');
 label('Signal BLOCKED', new THREE.Vector3(segX[5] + 0.3, 2.25, 0), 'red', 'nmo');
 const sigLabel = label('Healthy myelin: signal JUMPS node to node<small>saltatory conduction = fast</small>', new THREE.Vector3(segX[1] - 0.3, 1.95, 0), 'gold');
 
@@ -244,7 +241,7 @@ function setMode(m) {
   healthyMyelin.forEach(s => s.visible = !nmo);
   damaged.visible = antibodies.visible = glow.visible = blockX.visible = nmo;
   panel.classList.toggle('healthy-only', !nmo);
-  refreshLabels(); fire();
+  refreshLabels(); t0 = -1; status.style.display = 'none';
 }
 function refreshLabels() {
   labels.forEach(l => l.visible = showLabels && (l.userData.group !== 'nmo' || mode === 'nmo'));
@@ -257,7 +254,7 @@ document.getElementById('bReset').onclick = () => { camera.position.copy(HOME); 
 
 // signal path: list of hop targets (x positions along axon)
 const HOP = 0.2; // seconds per hop (fast)
-let t0 = -1, auto = 0;
+let t0 = -1;
 function fire() { t0 = clock.getElapsedTime(); signal.visible = true; status.style.display = 'block'; }
 
 function signalAt(t) {
@@ -290,9 +287,10 @@ function animate() {
   glow.material.opacity = 0.12 + Math.sin(time * 2) * 0.05;
   blockX.scale.setScalar(1 + Math.sin(time * 4) * 0.06);
 
-  // auto-fire every 5 s
-  if (t0 < 0 || time - t0 > 5) fire();
-
+  if (t0 < 0) {   // no signal until the button is pressed
+    signal.visible = false; trail.forEach(tr => tr.material.opacity = 0); bulbs.forEach(b => b.material.emissiveIntensity = 0);
+    renderer.render(scene, camera); labelRenderer.render(scene, camera); return;
+  }
   const s = signalAt(time - t0);
   signal.position.set(s.x, s.y, 0);
   col.setHex(s.color); signal.material.color.copy(col); signal.material.emissive.copy(col); halo.material.color.copy(col);
